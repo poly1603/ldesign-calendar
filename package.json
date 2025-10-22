@@ -1,0 +1,15 @@
+{
+  "name": "@ldesign/calendar",
+  "version": "0.1.0",
+  "description": "完整日历组件 - 月/周/日视图、事件管理、拖拽",
+  "keywords": ["ldesign", "calendar", "schedule", "event"],
+  "author": "LDesign Team",
+  "license": "MIT",
+  "type": "module",
+  "main": "./lib/index.cjs",
+  "module": "./es/index.js",
+  "scripts": {"build": "ldesign-builder build -f esm,cjs,dts"},
+  "dependencies": {"@ldesign/shared": "workspace:*", "@ldesign/i18n": "workspace:*"},
+  "devDependencies": {"@ldesign/builder": "workspace:*", "typescript": "^5.7.3"}
+}
+
