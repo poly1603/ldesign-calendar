@@ -1,0 +1,355 @@
+/**
+ * @ldesign/calendar - 核心样式
+ */
+
+/* 日历容器 */
+.ldesign-calendar {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 工具栏 */
+.ldesign-calendar-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e8e8e8;
+  background-color: #fafafa;
+}
+
+.ldesign-calendar-toolbar-left,
+.ldesign-calendar-toolbar-right,
+.ldesign-calendar-toolbar-custom {
+  display: flex;
+  gap: 8px;
+}
+
+.ldesign-calendar-toolbar-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #262626;
+}
+
+.ldesign-calendar-btn {
+  padding: 4px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 2px;
+  background-color: #fff;
+  color: #262626;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ldesign-calendar-btn:hover {
+  color: #40a9ff;
+  border-color: #40a9ff;
+}
+
+.ldesign-calendar-btn:active {
+  color: #096dd9;
+  border-color: #096dd9;
+}
+
+/* 头部 */
+.ldesign-calendar-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+/* 主体 */
+.ldesign-calendar-body {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+}
+
+/* 星期头 */
+.ldesign-calendar-week-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid #e8e8e8;
+  background-color: #fafafa;
+}
+
+.ldesign-calendar-week-cell {
+  padding: 8px;
+  text-align: center;
+  font-weight: 500;
+  color: #595959;
+}
+
+/* 日期网格（月视图） */
+.ldesign-calendar-grid {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.ldesign-calendar-cells {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  flex: 1;
+}
+
+.ldesign-calendar-date-cell {
+  border: 1px solid #f0f0f0;
+  padding: 4px;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.ldesign-calendar-date-cell:hover {
+  background-color: #fafafa;
+}
+
+.ldesign-calendar-date-cell.other-month {
+  background-color: #fafafa;
+  color: #bfbfbf;
+}
+
+.ldesign-calendar-date-cell.today .ldesign-calendar-date-number {
+  background-color: #1890ff;
+  color: #fff;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+}
+
+.ldesign-calendar-date-cell.weekend {
+  background-color: #fafafa;
+}
+
+.ldesign-calendar-date-number {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.ldesign-calendar-events-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+}
+
+/* 事件 */
+.ldesign-calendar-event {
+  padding: 2px 6px;
+  border-radius: 2px;
+  border-left: 3px solid;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.ldesign-calendar-event:hover {
+  transform: translateX(2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.ldesign-calendar-more-events {
+  font-size: 12px;
+  color: #1890ff;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+.ldesign-calendar-more-events:hover {
+  text-decoration: underline;
+}
+
+/* 周/日视图 */
+.ldesign-calendar-week-view,
+.ldesign-calendar-day-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.ldesign-calendar-week-day-header {
+  padding: 12px;
+  text-align: center;
+  border-right: 1px solid #f0f0f0;
+}
+
+.ldesign-calendar-week-day-header:last-child {
+  border-right: none;
+}
+
+.ldesign-calendar-week-day-header.today {
+  background-color: #e6f7ff;
+}
+
+.ldesign-calendar-day-name {
+  font-size: 12px;
+  color: #8c8c8c;
+  margin-bottom: 4px;
+}
+
+.ldesign-calendar-day-number {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.ldesign-calendar-week-grid {
+  display: flex;
+  flex: 1;
+  overflow: auto;
+  position: relative;
+}
+
+.ldesign-calendar-time-axis {
+  width: 60px;
+  border-right: 1px solid #f0f0f0;
+  flex-shrink: 0;
+}
+
+.ldesign-calendar-time-cell {
+  height: 60px;
+  border-bottom: 1px solid #f0f0f0;
+  position: relative;
+}
+
+.ldesign-calendar-time-label {
+  position: absolute;
+  top: -8px;
+  right: 8px;
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.ldesign-calendar-week-columns {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  position: relative;
+}
+
+.ldesign-calendar-week-column {
+  border-right: 1px solid #f0f0f0;
+  position: relative;
+  min-height: calc(24 * 60px);
+  /* 24 hours * 60px */
+}
+
+.ldesign-calendar-week-column:last-child {
+  border-right: none;
+}
+
+/* 时间事件（周/日视图） */
+.ldesign-calendar-time-event {
+  position: absolute;
+  border-radius: 4px;
+  padding: 4px 8px;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* 议程视图 */
+.ldesign-calendar-agenda-list {
+  padding: 16px;
+}
+
+.ldesign-calendar-agenda-empty {
+  text-align: center;
+  color: #8c8c8c;
+  padding: 40px;
+}
+
+.ldesign-calendar-agenda-item {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.ldesign-calendar-agenda-item:hover {
+  background-color: #fafafa;
+}
+
+.ldesign-calendar-agenda-time {
+  font-size: 12px;
+  color: #8c8c8c;
+  white-space: nowrap;
+  min-width: 120px;
+}
+
+.ldesign-calendar-agenda-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ldesign-calendar-agenda-indicator {
+  width: 4px;
+  height: 20px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.ldesign-calendar-agenda-title {
+  font-size: 14px;
+  color: #262626;
+}
+
+/* Canvas */
+.ldesign-calendar-canvas {
+  pointer-events: none;
+}
+
+/* 拖拽状态 */
+.ldesign-calendar-dragging {
+  cursor: move;
+}
+
+.ldesign-calendar-dragging .ldesign-calendar-event {
+  opacity: 0.6;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .ldesign-calendar-toolbar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ldesign-calendar-toolbar-title {
+    order: -1;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .ldesign-calendar-date-cell {
+    min-height: 60px;
+    font-size: 12px;
+  }
+
+  .ldesign-calendar-event {
+    font-size: 10px;
+    padding: 1px 4px;
+  }
+}

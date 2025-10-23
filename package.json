@@ -1,15 +1,79 @@
 {
   "name": "@ldesign/calendar",
   "version": "0.1.0",
-  "description": "完整日历组件 - 月/周/日视图、事件管理、拖拽",
-  "keywords": ["ldesign", "calendar", "schedule", "event"],
+  "description": "完整日历组件 - 月/周/日视图、事件管理、拖拽调整、重复事件",
+  "keywords": [
+    "ldesign",
+    "calendar",
+    "schedule",
+    "event",
+    "datepicker",
+    "recurrence",
+    "drag-and-drop",
+    "vue",
+    "react",
+    "webcomponent"
+  ],
   "author": "LDesign Team",
   "license": "MIT",
   "type": "module",
   "main": "./lib/index.cjs",
   "module": "./es/index.js",
-  "scripts": {"build": "ldesign-builder build -f esm,cjs,dts"},
-  "dependencies": {"@ldesign/shared": "workspace:*", "@ldesign/i18n": "workspace:*"},
-  "devDependencies": {"@ldesign/builder": "workspace:*", "typescript": "^5.7.3"}
+  "types": "./es/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./es/index.js",
+      "require": "./lib/index.cjs",
+      "types": "./es/index.d.ts"
+    },
+    "./vue": {
+      "import": "./es/adapters/vue/index.js",
+      "types": "./es/adapters/vue/index.d.ts"
+    },
+    "./react": {
+      "import": "./es/adapters/react/index.js",
+      "types": "./es/adapters/react/index.d.ts"
+    },
+    "./webcomponent": {
+      "import": "./es/adapters/webcomponent/index.js",
+      "types": "./es/adapters/webcomponent/index.d.ts"
+    },
+    "./dist/calendar.css": "./dist/calendar.css"
+  },
+  "files": [
+    "es",
+    "lib",
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "ldesign-builder build -f esm,cjs,dts",
+    "dev": "ldesign-builder dev",
+    "clean": "rm -rf es lib dist"
+  },
+  "dependencies": {
+    "@ldesign/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@ldesign/builder": "workspace:*",
+    "typescript": "^5.7.3",
+    "vue": "^3.3.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0",
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "vue": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
+  }
 }
 
