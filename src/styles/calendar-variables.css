@@ -1,0 +1,125 @@
+/**
+ * @ldesign/calendar - 组件专用 CSS 变量
+ * 基于 LDesign 主题变量扩展的日历组件专用变量
+ */
+
+:root {
+  /* 日历专用颜色 */
+  --calendar-weekend-bg: var(--color-bg-layout);
+  --calendar-today-bg: var(--color-primary-default);
+  --calendar-today-color: var(--color-text-inverse);
+  --calendar-other-month-bg: var(--color-bg-layout);
+  --calendar-other-month-color: var(--color-text-tertiary);
+  --calendar-hover-bg: var(--color-bg-elevated);
+
+  /* 事件颜色 */
+  --calendar-event-default-bg: var(--color-primary-lighter);
+  --calendar-event-default-border: var(--color-primary-default);
+  --calendar-event-default-color: var(--color-primary-default);
+
+  --calendar-event-success-bg: var(--color-success-lighter);
+  --calendar-event-success-border: var(--color-success-default);
+  --calendar-event-success-color: var(--color-success-default);
+
+  --calendar-event-warning-bg: var(--color-warning-lighter);
+  --calendar-event-warning-border: var(--color-warning-default);
+  --calendar-event-warning-color: var(--color-warning-default);
+
+  --calendar-event-danger-bg: var(--color-danger-lighter);
+  --calendar-event-danger-border: var(--color-danger-default);
+  --calendar-event-danger-color: var(--color-danger-default);
+
+  --calendar-event-info-bg: var(--color-info-lighter);
+  --calendar-event-info-border: var(--color-info-default);
+  --calendar-event-info-color: var(--color-info-default);
+
+  /* 尺寸 */
+  --calendar-cell-min-height: var(--size-17);
+  --calendar-cell-min-height-mobile: var(--size-15);
+  --calendar-time-axis-width: var(--size-15);
+  --calendar-time-cell-height: var(--size-15);
+  --calendar-today-indicator-size: var(--size-8);
+
+  /* 动画 */
+  --calendar-transition-duration: 0.2s;
+  --calendar-transition-timing: ease;
+}
+
+/* 暗黑模式 */
+[data-theme="dark"] {
+  /* 调整暗黑模式下的专用颜色 */
+  --calendar-weekend-bg: var(--color-gray-900);
+  --calendar-today-bg: var(--color-primary-600);
+  --calendar-other-month-bg: var(--color-gray-950);
+  --calendar-hover-bg: var(--color-gray-800);
+
+  /* 事件颜色暗黑模式调整 */
+  --calendar-event-default-bg: rgba(24, 144, 255, 0.15);
+  --calendar-event-default-border: var(--color-primary-600);
+  --calendar-event-default-color: var(--color-primary-400);
+
+  --calendar-event-success-bg: rgba(82, 196, 26, 0.15);
+  --calendar-event-success-border: var(--color-success-600);
+  --calendar-event-success-color: var(--color-success-400);
+
+  --calendar-event-warning-bg: rgba(250, 173, 20, 0.15);
+  --calendar-event-warning-border: var(--color-warning-600);
+  --calendar-event-warning-color: var(--color-warning-400);
+
+  --calendar-event-danger-bg: rgba(255, 77, 79, 0.15);
+  --calendar-event-danger-border: var(--color-danger-600);
+  --calendar-event-danger-color: var(--color-danger-400);
+
+  --calendar-event-info-bg: rgba(24, 144, 255, 0.15);
+  --calendar-event-info-border: var(--color-info-600);
+  --calendar-event-info-color: var(--color-info-400);
+}
+
+/* 事件类型样式 */
+.ldesign-calendar-event--default {
+  background-color: var(--calendar-event-default-bg);
+  border-left-color: var(--calendar-event-default-border);
+  color: var(--calendar-event-default-color);
+}
+
+.ldesign-calendar-event--success {
+  background-color: var(--calendar-event-success-bg);
+  border-left-color: var(--calendar-event-success-border);
+  color: var(--calendar-event-success-color);
+}
+
+.ldesign-calendar-event--warning {
+  background-color: var(--calendar-event-warning-bg);
+  border-left-color: var(--calendar-event-warning-border);
+  color: var(--calendar-event-warning-color);
+}
+
+.ldesign-calendar-event--danger {
+  background-color: var(--calendar-event-danger-bg);
+  border-left-color: var(--calendar-event-danger-border);
+  color: var(--calendar-event-danger-color);
+}
+
+.ldesign-calendar-event--info {
+  background-color: var(--calendar-event-info-bg);
+  border-left-color: var(--calendar-event-info-border);
+  color: var(--calendar-event-info-color);
+}
+
+/* 高对比度模式支持 */
+@media (prefers-contrast: high) {
+  :root {
+    --calendar-event-default-border: var(--color-primary-700);
+    --calendar-event-success-border: var(--color-success-700);
+    --calendar-event-warning-border: var(--color-warning-700);
+    --calendar-event-danger-border: var(--color-danger-700);
+    --calendar-event-info-border: var(--color-info-700);
+  }
+}
+
+/* 减少动画模式 */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --calendar-transition-duration: 0s;
+  }
+}

@@ -17,44 +17,79 @@
   "author": "LDesign Team",
   "license": "MIT",
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./es/index.d.ts",
+      "import": "./es/index.js",
+      "require": "./lib/index.cjs"
+    },
+    "./core/*": {
+      "types": "./es/core/*.d.ts",
+      "import": "./es/core/*.js",
+      "require": "./lib/core/*.cjs"
+    },
+    "./interaction/*": {
+      "types": "./es/interaction/*.d.ts",
+      "import": "./es/interaction/*.js",
+      "require": "./lib/interaction/*.cjs"
+    },
+    "./renderers/*": {
+      "types": "./es/renderers/*.d.ts",
+      "import": "./es/renderers/*.js",
+      "require": "./lib/renderers/*.cjs"
+    },
+    "./storage/*": {
+      "types": "./es/storage/*.d.ts",
+      "import": "./es/storage/*.js",
+      "require": "./lib/storage/*.cjs"
+    },
+    "./types": {
+      "types": "./es/types/index.d.ts",
+      "import": "./es/types/index.js",
+      "require": "./lib/types/index.cjs"
+    },
+    "./types/*": {
+      "types": "./es/types/*.d.ts",
+      "import": "./es/types/*.js",
+      "require": "./lib/types/*.cjs"
+    },
+    "./utils/*": {
+      "types": "./es/utils/*.d.ts",
+      "import": "./es/utils/*.js",
+      "require": "./lib/utils/*.cjs"
+    },
+    "./es/adapters/vue/index.css": "./es/adapters/vue/index.css",
+    "./lib/adapters/vue/index.css": "./lib/adapters/vue/index.css"
+  },
   "main": "./lib/index.cjs",
   "module": "./es/index.js",
   "types": "./es/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./es/index.js",
-      "require": "./lib/index.cjs",
-      "types": "./es/index.d.ts"
-    },
-    "./vue": {
-      "import": "./es/adapters/vue/index.js",
-      "types": "./es/adapters/vue/index.d.ts"
-    },
-    "./react": {
-      "import": "./es/adapters/react/index.js",
-      "types": "./es/adapters/react/index.d.ts"
-    },
-    "./webcomponent": {
-      "import": "./es/adapters/webcomponent/index.js",
-      "types": "./es/adapters/webcomponent/index.d.ts"
-    },
-    "./dist/calendar.css": "./dist/calendar.css"
-  },
+  "unpkg": "./dist/index.min.js",
+  "jsdelivr": "./dist/index.min.js",
   "files": [
+    "README.md",
+    "LICENSE",
+    "package.json",
     "es",
     "lib",
-    "dist",
-    "README.md",
-    "CHANGELOG.md",
-    "LICENSE"
+    "dist"
   ],
   "scripts": {
-    "build": "ldesign-builder build -f esm,cjs,dts",
+    "build": "ldesign-builder build",
+    "build:watch": "ldesign-builder build --watch",
+    "build:clean": "ldesign-builder clean && ldesign-builder build",
     "dev": "ldesign-builder dev",
-    "clean": "rm -rf es lib dist"
+    "clean": "rm -rf es lib dist types",
+    "lint": "eslint src --ext .ts,.tsx --fix",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage"
   },
   "dependencies": {
     "@ldesign/shared": "workspace:*"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0",
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
     "@ldesign/builder": "workspace:*",
@@ -62,10 +97,6 @@
     "vue": "^3.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
-  },
-  "peerDependencies": {
-    "vue": "^3.0.0",
-    "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
   },
   "peerDependenciesMeta": {
     "vue": {
@@ -76,4 +107,3 @@
     }
   }
 }
-

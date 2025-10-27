@@ -40,6 +40,13 @@ export { DragHandler } from './interaction/drag-handler';
 export { ResizeHandler } from './interaction/resize-handler';
 export { CreateHandler } from './interaction/create-handler';
 
+// 导出国际化
+export { I18nManager, getI18n, setI18n, t } from './i18n';
+export type { I18nConfig, Locale } from './i18n';
+
+// 导出无障碍性
+export { A11yManager, createA11yManager } from './a11y';
+
 /**
  * 便捷创建函数
  */
