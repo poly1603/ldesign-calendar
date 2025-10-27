@@ -1,0 +1,61 @@
+{
+  "name": "@ldesign/calendar-core",
+  "version": "0.2.0",
+  "description": "日历核心功能 - 纯 JavaScript/TypeScript 实现",
+  "keywords": [
+    "calendar",
+    "scheduler",
+    "events",
+    "date",
+    "recurrence"
+  ],
+  "author": "LDesign Team",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./calendar": {
+      "types": "./dist/calendar.d.ts",
+      "import": "./dist/calendar.js",
+      "require": "./dist/calendar.cjs"
+    },
+    "./event-manager": {
+      "types": "./dist/event-manager.d.ts",
+      "import": "./dist/event-manager.js",
+      "require": "./dist/event-manager.cjs"
+    },
+    "./types": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/types.js",
+      "require": "./dist/types.cjs"
+    },
+    "./utils": {
+      "types": "./dist/utils.d.ts",
+      "import": "./dist/utils.js",
+      "require": "./dist/utils.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.1",
+    "typescript": "^5.7.3"
+  }
+}
+
