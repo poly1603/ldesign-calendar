@@ -1,0 +1,51 @@
+{
+  "name": "@ldesign/calendar-vue",
+  "version": "0.2.0",
+  "description": "日历 Vue3 组件",
+  "keywords": [
+    "calendar",
+    "vue",
+    "vue3",
+    "component"
+  ],
+  "author": "LDesign Team",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./style.css": "./dist/style.css"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup && vite build",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist",
+    "type-check": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "@ldesign/calendar-core": "workspace:*"
+  },
+  "peerDependencies": {
+    "vue": "^3.3.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.0",
+    "tsup": "^8.0.1",
+    "typescript": "^5.7.3",
+    "vite": "^5.0.0",
+    "vue": "^3.4.0",
+    "vue-tsc": "^1.8.27"
+  }
+}
+
