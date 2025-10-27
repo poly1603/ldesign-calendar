@@ -14,6 +14,8 @@ import {
   startOfDay,
   endOfDay,
 } from '../utils/date-utils';
+import { VirtualScrollAdapter, VirtualScrollAdapterConfig } from './virtual-scroll-adapter';
+import { CalendarEvent } from '../types';
 
 /**
  * 视图管理器
@@ -22,6 +24,9 @@ export class ViewManager {
   private currentView: CalendarView;
   private currentDate: Date;
   private firstDayOfWeek: Weekday;
+  private virtualScrollAdapter: VirtualScrollAdapter | null = null;
+  private virtualScrollEnabled: boolean = false;
+  private container: HTMLElement | null = null;
 
   constructor(initialView: CalendarView = 'month' as CalendarView, initialDate?: Date, firstDayOfWeek?: Weekday) {
     this.currentView = initialView;
@@ -36,12 +41,6 @@ export class ViewManager {
     return this.currentView;
   }
 
-  /**
-   * 设置当前视图
-   */
-  setCurrentView(view: CalendarView): void {
-    this.currentView = view;
-  }
 
   /**
    * 获取当前日期
@@ -141,6 +140,123 @@ export class ViewManager {
       currentDate: this.currentDate,
       dateRange: this.getDateRange(),
     };
+  }
+
+  /**
+   * 启用虚拟滚动
+   */
+  enableVirtualScroll(container: HTMLElement, config: Partial<VirtualScrollAdapterConfig>): void {
+    this.container = container;
+    this.virtualScrollEnabled = true;
+
+    // 如果已存在虚拟滚动适配器，先销毁
+    if (this.virtualScrollAdapter) {
+      this.virtualScrollAdapter.destroy();
+    }
+
+    // 创建新的虚拟滚动适配器
+    this.virtualScrollAdapter = new VirtualScrollAdapter({
+      ...config,
+      viewType: this.currentView,
+      container,
+    } as VirtualScrollAdapterConfig);
+  }
+
+  /**
+   * 禁用虚拟滚动
+   */
+  disableVirtualScroll(): void {
+    this.virtualScrollEnabled = false;
+    if (this.virtualScrollAdapter) {
+      this.virtualScrollAdapter.destroy();
+      this.virtualScrollAdapter = null;
+    }
+  }
+
+  /**
+   * 更新虚拟滚动事件
+   */
+  updateVirtualScrollEvents(events: CalendarEvent[]): void {
+    if (this.virtualScrollAdapter && this.virtualScrollEnabled) {
+      this.virtualScrollAdapter.updateEvents(events, this.getDateRange());
+    }
+  }
+
+  /**
+   * 初始化虚拟滚动
+   */
+  initializeVirtualScroll(events: CalendarEvent[]): void {
+    if (this.virtualScrollAdapter && this.virtualScrollEnabled) {
+      this.virtualScrollAdapter.initialize(events, this.getDateRange());
+    }
+  }
+
+  /**
+   * 滚动到指定日期
+   */
+  scrollToDate(date: Date): void {
+    if (this.virtualScrollAdapter && this.virtualScrollEnabled) {
+      this.virtualScrollAdapter.scrollToDate(date);
+    }
+  }
+
+  /**
+   * 滚动到指定事件
+   */
+  scrollToEvent(eventId: string): void {
+    if (this.virtualScrollAdapter && this.virtualScrollEnabled) {
+      this.virtualScrollAdapter.scrollToEvent(eventId);
+    }
+  }
+
+  /**
+   * 获取虚拟滚动是否启用
+   */
+  isVirtualScrollEnabled(): boolean {
+    return this.virtualScrollEnabled;
+  }
+
+  /**
+   * 切换视图时更新虚拟滚动
+   */
+  private updateVirtualScrollForView(): void {
+    if (this.virtualScrollAdapter && this.virtualScrollEnabled && this.container) {
+      // 重新创建适配器以匹配新视图
+      const config = {
+        viewType: this.currentView,
+        container: this.container,
+        // 保留原有的渲染函数
+        renderEvent: (this.virtualScrollAdapter as any).config.renderEvent,
+        renderDateCell: (this.virtualScrollAdapter as any).config.renderDateCell,
+        renderTimeSlot: (this.virtualScrollAdapter as any).config.renderTimeSlot,
+      };
+
+      this.virtualScrollAdapter.destroy();
+      this.virtualScrollAdapter = new VirtualScrollAdapter(config);
+    }
+  }
+
+  /**
+   * 重写 setCurrentView 以支持虚拟滚动
+   */
+  setCurrentView(view: CalendarView): void {
+    const oldView = this.currentView;
+    this.currentView = view;
+
+    // 如果视图改变，更新虚拟滚动
+    if (oldView !== view) {
+      this.updateVirtualScrollForView();
+    }
+  }
+
+  /**
+   * 销毁视图管理器
+   */
+  destroy(): void {
+    if (this.virtualScrollAdapter) {
+      this.virtualScrollAdapter.destroy();
+      this.virtualScrollAdapter = null;
+    }
   }
 }
 
