@@ -1,12 +1,12 @@
 /**
- * @ldesign/calendar-core - 事件工具函数
+ * @ldesign/calendar-core - Event utility functions
  */
 
 import type { CalendarEvent, EventLayout } from '../types';
-import { isSameDay, isDateInRange, minutesBetween } from './date';
+import { minutesBetween } from './date';
 
 /**
- * 生成唯一 ID（优化版）
+ * Generate unique ID
  */
 let idCounter = 0;
 export function generateId(prefix: string = 'event'): string {
@@ -14,85 +14,60 @@ export function generateId(prefix: string = 'event'): string {
 }
 
 /**
- * 判断两个事件是否重叠
+ * Check if two events overlap
  */
 export function hasOverlap(event1: CalendarEvent, event2: CalendarEvent): boolean {
   return event1.start < event2.end && event1.end > event2.start;
 }
 
 /**
- * 判断事件是否在指定日期范围内
- */
-export function isEventInRange(event: CalendarEvent, start: Date, end: Date): boolean {
-  return event.start < end && event.end > start;
-}
-
-/**
- * 判断事件是否在指定日期
- */
-export function isEventOnDate(event: CalendarEvent, date: Date): boolean {
-  const dayStart = new Date(date);
-  dayStart.setHours(0, 0, 0, 0);
-  const dayEnd = new Date(date);
-  dayEnd.setHours(23, 59, 59, 999);
-
-  return isEventInRange(event, dayStart, dayEnd);
-}
-
-/**
- * 按日期分组事件
- */
-export function groupEventsByDate(events: CalendarEvent[]): Map<string, CalendarEvent[]> {
-  const grouped = new Map<string, CalendarEvent[]>();
-
-  for (const event of events) {
-    const dateKey = event.start.toDateString();
-    if (!grouped.has(dateKey)) {
-      grouped.set(dateKey, []);
-    }
-    grouped.get(dateKey)!.push(event);
-  }
-
-  return grouped;
-}
-
-/**
- * 排序事件（按开始时间）
+ * Sort events by start time, then by duration (longer first)
  */
 export function sortEvents(events: CalendarEvent[]): CalendarEvent[] {
-  return [...events].sort((a, b) => a.start.getTime() - b.start.getTime());
+  return [...events].sort((a, b) => {
+    if (a.start.getTime() !== b.start.getTime()) {
+      return a.start.getTime() - b.start.getTime();
+    }
+    const durationA = a.end.getTime() - a.start.getTime();
+    const durationB = b.end.getTime() - b.start.getTime();
+    return durationB - durationA;
+  });
 }
 
 /**
- * 计算事件重叠布局（优化版）
+ * Group overlapping events into columns
  */
-export function calculateEventLayout(events: CalendarEvent[]): EventLayout[] {
-  if (events.length === 0) return [];
-
+export function groupOverlappingEvents(events: CalendarEvent[]): CalendarEvent[][] {
   const sorted = sortEvents(events);
   const columns: CalendarEvent[][] = [];
 
-  // 将事件分配到列中
   for (const event of sorted) {
     let placed = false;
 
-    // 尝试放入现有列
     for (const column of columns) {
-      const lastEvent = column[column.length - 1];
-      if (!hasOverlap(lastEvent, event)) {
+      const hasCollision = column.some(e => hasOverlap(e, event));
+      if (!hasCollision) {
         column.push(event);
         placed = true;
         break;
       }
     }
 
-    // 如果无法放入现有列，创建新列
     if (!placed) {
       columns.push([event]);
     }
   }
 
-  // 计算每个事件的布局信息
+  return columns;
+}
+
+/**
+ * Calculate event layout for display
+ */
+export function calculateEventLayout(events: CalendarEvent[]): EventLayout[] {
+  const sorted = sortEvents(events);
+  const columns = groupOverlappingEvents(events);
+
   const layouts: EventLayout[] = [];
   const eventColumnMap = new Map<string, number>();
 
@@ -105,7 +80,7 @@ export function calculateEventLayout(events: CalendarEvent[]): EventLayout[] {
   for (const event of sorted) {
     const colIndex = eventColumnMap.get(event.id)!;
 
-    // 计算与此事件重叠的最大列数
+    // Calculate max columns for overlapping events
     let maxColumns = 1;
     for (let i = 0; i < columns.length; i++) {
       if (columns[i].some(e => hasOverlap(e, event))) {
@@ -126,10 +101,10 @@ export function calculateEventLayout(events: CalendarEvent[]): EventLayout[] {
 }
 
 /**
- * 获取事件显示文本
+ * Get event display text
  */
 export function getEventDisplayText(event: CalendarEvent, maxLength?: number): string {
-  const text = event.title || '(无标题)';
+  const text = event.title || '(Untitled)';
   if (maxLength && text.length > maxLength) {
     return text.substring(0, maxLength - 3) + '...';
   }
@@ -137,185 +112,156 @@ export function getEventDisplayText(event: CalendarEvent, maxLength?: number): s
 }
 
 /**
- * 获取事件颜色
+ * Calculate event duration in minutes
  */
-export function getEventColor(event: CalendarEvent): {
-  backgroundColor: string;
-  borderColor: string;
-  textColor: string;
-} {
-  return {
-    backgroundColor: event.backgroundColor || event.color || '#3788d8',
-    borderColor: event.borderColor || event.color || '#3788d8',
-    textColor: event.textColor || '#ffffff',
-  };
+export function getEventDuration(event: CalendarEvent): number {
+  return minutesBetween(event.start, event.end);
 }
 
 /**
- * 克隆事件
+ * Check if event is all day
  */
-export function cloneEvent(event: CalendarEvent): CalendarEvent {
-  return {
-    ...event,
-    start: new Date(event.start),
-    end: new Date(event.end),
-    recurrence: event.recurrence ? { ...event.recurrence } : undefined,
-    extendedProps: event.extendedProps ? { ...event.extendedProps } : undefined,
-  };
+export function isAllDayEvent(event: CalendarEvent): boolean {
+  if (event.allDay) return true;
+
+  const start = event.start;
+  const end = event.end;
+
+  return (
+    start.getHours() === 0 &&
+    start.getMinutes() === 0 &&
+    end.getHours() === 23 &&
+    end.getMinutes() === 59
+  );
 }
 
 /**
- * 验证事件数据
+ * Validate calendar event
  */
 export function validateEvent(event: Partial<CalendarEvent>): string[] {
   const errors: string[] = [];
 
   if (!event.title || event.title.trim() === '') {
-    errors.push('标题不能为空');
+    errors.push('Event title is required');
   }
 
   if (!event.start) {
-    errors.push('开始时间不能为空');
+    errors.push('Event start time is required');
   }
 
   if (!event.end) {
-    errors.push('结束时间不能为空');
+    errors.push('Event end time is required');
   }
 
   if (event.start && event.end && event.start >= event.end) {
-    errors.push('结束时间必须晚于开始时间');
+    errors.push('Event start time must be before end time');
   }
 
   return errors;
 }
 
 /**
- * 合并事件更新
+ * Clone event
  */
-export function mergeEventUpdates(
-  original: CalendarEvent,
-  updates: Partial<CalendarEvent>
-): CalendarEvent {
+export function cloneEvent(event: CalendarEvent): CalendarEvent {
   return {
-    ...original,
-    ...updates,
-    start: updates.start ? new Date(updates.start) : original.start,
-    end: updates.end ? new Date(updates.end) : original.end,
+    ...event,
+    id: generateId('event'),
+    start: new Date(event.start),
+    end: new Date(event.end),
+    extendedProps: event.extendedProps ? { ...event.extendedProps } : undefined,
   };
 }
 
 /**
- * 计算事件在视图中的位置（像素）
+ * Check if event spans multiple days
  */
-export function calculateEventPosition(
-  event: CalendarEvent,
-  containerHeight: number,
-  startHour: number = 0,
-  endHour: number = 24
-): { top: number; height: number } {
-  const totalMinutes = (endHour - startHour) * 60;
-  const pixelsPerMinute = containerHeight / totalMinutes;
-
-  const eventStartMinutes = event.start.getHours() * 60 + event.start.getMinutes() - startHour * 60;
-  const eventDuration = minutesBetween(event.start, event.end);
-
-  return {
-    top: Math.max(0, eventStartMinutes * pixelsPerMinute),
-    height: Math.max(20, eventDuration * pixelsPerMinute), // 最小高度20px
-  };
+export function isMultiDayEvent(event: CalendarEvent): boolean {
+  const startDay = new Date(event.start.getFullYear(), event.start.getMonth(), event.start.getDate());
+  const endDay = new Date(event.end.getFullYear(), event.end.getMonth(), event.end.getDate());
+  return endDay.getTime() > startDay.getTime();
 }
 
 /**
- * 判断事件是否可编辑
+ * Split multi-day event into daily segments
  */
-export function isEventEditable(event: CalendarEvent, globalEditable?: boolean): boolean {
-  if (event.editable !== undefined) {
-    return event.editable;
+export function splitMultiDayEvent(event: CalendarEvent): CalendarEvent[] {
+  if (!isMultiDayEvent(event)) {
+    return [event];
   }
-  return globalEditable !== false;
-}
 
-/**
- * 判断事件是否可拖拽
- */
-export function isEventDraggable(event: CalendarEvent, globalEditable?: boolean): boolean {
-  if (event.draggable !== undefined) {
-    return event.draggable;
+  const segments: CalendarEvent[] = [];
+  const current = new Date(event.start);
+  const end = new Date(event.end);
+
+  while (current < end) {
+    const dayEnd = new Date(current);
+    dayEnd.setHours(23, 59, 59, 999);
+
+    segments.push({
+      ...event,
+      id: `${event.id}_${segments.length}`,
+      start: new Date(current),
+      end: dayEnd < end ? dayEnd : new Date(end),
+      extendedProps: {
+        ...event.extendedProps,
+        _isSegment: true,
+        _segmentIndex: segments.length,
+        _originalId: event.id,
+      },
+    });
+
+    current.setDate(current.getDate() + 1);
+    current.setHours(0, 0, 0, 0);
   }
-  return isEventEditable(event, globalEditable);
+
+  return segments;
 }
 
 /**
- * 判断事件是否可调整大小
+ * Filter events by date range
  */
-export function isEventResizable(event: CalendarEvent, globalEditable?: boolean): boolean {
-  if (event.resizable !== undefined) {
-    return event.resizable;
-  }
-  return isEventEditable(event, globalEditable);
-}
-
-/**
- * 过滤事件
- */
-export function filterEvents(
+export function filterEventsByDateRange(
   events: CalendarEvent[],
-  predicate: (event: CalendarEvent) => boolean
+  start: Date,
+  end: Date
 ): CalendarEvent[] {
-  return events.filter(predicate);
+  return events.filter(event => {
+    return event.start < end && event.end > start;
+  });
 }
 
 /**
- * 查找事件
+ * Get events for specific date
  */
-export function findEvent(
-  events: CalendarEvent[],
-  predicate: (event: CalendarEvent) => boolean
-): CalendarEvent | undefined {
-  return events.find(predicate);
+export function getEventsForDate(events: CalendarEvent[], date: Date): CalendarEvent[] {
+  const dayStart = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const dayEnd = new Date(dayStart);
+  dayEnd.setDate(dayEnd.getDate() + 1);
+
+  return filterEventsByDateRange(events, dayStart, dayEnd);
 }
 
 /**
- * 获取事件统计信息
+ * Merge overlapping events (for display optimization)
  */
-export function getEventStats(events: CalendarEvent[]): {
-  total: number;
-  today: number;
-  upcoming: number;
-  past: number;
-  allDay: number;
-} {
-  const now = new Date();
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const todayEnd = new Date();
-  todayEnd.setHours(23, 59, 59, 999);
+export function mergeOverlappingEvents(events: CalendarEvent[]): CalendarEvent[] {
+  if (events.length === 0) return [];
 
-  let todayCount = 0;
-  let upcomingCount = 0;
-  let pastCount = 0;
-  let allDayCount = 0;
+  const sorted = sortEvents(events);
+  const merged: CalendarEvent[] = [sorted[0]];
 
-  for (const event of events) {
-    if (event.allDay) {
-      allDayCount++;
-    }
+  for (let i = 1; i < sorted.length; i++) {
+    const current = sorted[i];
+    const last = merged[merged.length - 1];
 
-    if (isEventInRange(event, today, todayEnd)) {
-      todayCount++;
-    } else if (event.start > now) {
-      upcomingCount++;
-    } else if (event.end < now) {
-      pastCount++;
+    if (hasOverlap(last, current)) {
+      last.end = new Date(Math.max(last.end.getTime(), current.end.getTime()));
+      last.title = `${last.title} + ${current.title}`;
+    } else {
+      merged.push({ ...current });
     }
   }
 
-  return {
-    total: events.length,
-    today: todayCount,
-    upcoming: upcomingCount,
-    past: pastCount,
-    allDay: allDayCount,
-  };
+  return merged;
 }
-

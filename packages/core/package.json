@@ -1,13 +1,15 @@
 {
   "name": "@ldesign/calendar-core",
-  "version": "0.2.0",
-  "description": "日历核心功能 - 纯 JavaScript/TypeScript 实现",
+  "version": "1.0.0",
+  "description": "日历核心功能 - 纯JavaScript/TypeScript实现，框架无关",
   "keywords": [
     "calendar",
     "scheduler",
     "events",
     "date",
-    "recurrence"
+    "recurrence",
+    "framework-agnostic",
+    "typescript"
   ],
   "author": "LDesign Team",
   "license": "MIT",
@@ -26,20 +28,15 @@
       "import": "./dist/calendar.js",
       "require": "./dist/calendar.cjs"
     },
-    "./event-manager": {
-      "types": "./dist/event-manager.d.ts",
-      "import": "./dist/event-manager.js",
-      "require": "./dist/event-manager.cjs"
-    },
     "./types": {
-      "types": "./dist/types.d.ts",
-      "import": "./dist/types.js",
-      "require": "./dist/types.cjs"
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/types/index.js",
+      "require": "./dist/types/index.cjs"
     },
-    "./utils": {
-      "types": "./dist/utils.d.ts",
-      "import": "./dist/utils.js",
-      "require": "./dist/utils.cjs"
+    "./utils/*": {
+      "types": "./dist/utils/*.d.ts",
+      "import": "./dist/utils/*.js",
+      "require": "./dist/utils/*.cjs"
     }
   },
   "files": [
@@ -48,14 +45,26 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
-    "clean": "rm -rf dist",
-    "type-check": "tsc --noEmit"
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "clean": "rimraf dist",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "type-check": "tsc --noEmit",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage"
   },
   "devDependencies": {
-    "tsup": "^8.0.1",
-    "typescript": "^5.7.3"
+    "@antfu/eslint-config": "^2.6.0",
+    "@types/jsdom": "^27.0.0",
+    "@types/node": "^20.0.0",
+    "@vitest/coverage-v8": "^1.0.0",
+    "eslint": "^8.56.0",
+    "jsdom": "^27.0.1",
+    "rimraf": "^5.0.0",
+    "typescript": "^5.7.3",
+    "vite": "^5.0.0",
+    "vite-plugin-dts": "^3.0.0",
+    "vitest": "^1.0.0"
   }
 }
-

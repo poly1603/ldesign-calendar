@@ -1,13 +1,13 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: ['src/index.ts'],
+  entry: ['src/composables/useCalendar.ts'],
   format: ['esm', 'cjs'],
   dts: true,
   sourcemap: true,
-  clean: true,
+  clean: false,
   external: ['vue', '@ldesign/calendar-core'],
   target: 'es2020',
-  outDir: 'dist',
+  outDir: 'dist/composables',
 });
 

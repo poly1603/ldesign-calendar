@@ -2,7 +2,7 @@
  * @ldesign/calendar-react - Calendar 组件
  */
 
-import React, { useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
+import { useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
 import type {
   Calendar as CalendarCore,
   CalendarConfig,

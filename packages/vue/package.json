@@ -28,8 +28,8 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsup && vite build",
-    "dev": "tsup --watch",
+    "build": "vite build",
+    "dev": "vite build --watch",
     "clean": "rm -rf dist",
     "type-check": "vue-tsc --noEmit"
   },
@@ -44,6 +44,7 @@
     "tsup": "^8.0.1",
     "typescript": "^5.7.3",
     "vite": "^5.0.0",
+    "vite-plugin-dts": "^3.0.0",
     "vue": "^3.4.0",
     "vue-tsc": "^1.8.27"
   }

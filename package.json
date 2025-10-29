@@ -1,109 +1,31 @@
 {
-  "name": "@ldesign/calendar",
-  "version": "0.1.0",
-  "description": "完整日历组件 - 月/周/日视图、事件管理、拖拽调整、重复事件",
-  "keywords": [
-    "ldesign",
-    "calendar",
-    "schedule",
-    "event",
-    "datepicker",
-    "recurrence",
-    "drag-and-drop",
-    "vue",
-    "react",
-    "webcomponent"
-  ],
+  "name": "@ldesign/calendar-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "@ldesign/calendar monorepo - 支持多框架的日历组件库",
   "author": "LDesign Team",
   "license": "MIT",
-  "type": "module",
-  "exports": {
-    ".": {
-      "types": "./es/index.d.ts",
-      "import": "./es/index.js",
-      "require": "./lib/index.cjs"
-    },
-    "./core/*": {
-      "types": "./es/core/*.d.ts",
-      "import": "./es/core/*.js",
-      "require": "./lib/core/*.cjs"
-    },
-    "./interaction/*": {
-      "types": "./es/interaction/*.d.ts",
-      "import": "./es/interaction/*.js",
-      "require": "./lib/interaction/*.cjs"
-    },
-    "./renderers/*": {
-      "types": "./es/renderers/*.d.ts",
-      "import": "./es/renderers/*.js",
-      "require": "./lib/renderers/*.cjs"
-    },
-    "./storage/*": {
-      "types": "./es/storage/*.d.ts",
-      "import": "./es/storage/*.js",
-      "require": "./lib/storage/*.cjs"
-    },
-    "./types": {
-      "types": "./es/types/index.d.ts",
-      "import": "./es/types/index.js",
-      "require": "./lib/types/index.cjs"
-    },
-    "./types/*": {
-      "types": "./es/types/*.d.ts",
-      "import": "./es/types/*.js",
-      "require": "./lib/types/*.cjs"
-    },
-    "./utils/*": {
-      "types": "./es/utils/*.d.ts",
-      "import": "./es/utils/*.js",
-      "require": "./lib/utils/*.cjs"
-    },
-    "./es/adapters/vue/index.css": "./es/adapters/vue/index.css",
-    "./lib/adapters/vue/index.css": "./lib/adapters/vue/index.css"
-  },
-  "main": "./lib/index.cjs",
-  "module": "./es/index.js",
-  "types": "./es/index.d.ts",
-  "unpkg": "./dist/index.min.js",
-  "jsdelivr": "./dist/index.min.js",
-  "files": [
-    "README.md",
-    "LICENSE",
-    "package.json",
-    "es",
-    "lib",
-    "dist"
-  ],
   "scripts": {
-    "build": "ldesign-builder build",
-    "build:watch": "ldesign-builder build --watch",
-    "build:clean": "ldesign-builder clean && ldesign-builder build",
-    "dev": "ldesign-builder dev",
-    "clean": "rm -rf es lib dist types",
-    "lint": "eslint src --ext .ts,.tsx --fix",
-    "test": "vitest",
-    "test:coverage": "vitest --coverage"
-  },
-  "dependencies": {
-    "@ldesign/shared": "workspace:*"
-  },
-  "peerDependencies": {
-    "vue": "^3.0.0",
-    "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
+    "build": "pnpm -r --filter=./packages/* run build",
+    "dev": "pnpm -r --filter=./packages/* run dev",
+    "lint": "pnpm -r --filter=./packages/* run lint",
+    "lint:fix": "pnpm -r --filter=./packages/* run lint:fix",
+    "type-check": "pnpm -r --filter=./packages/* run type-check",
+    "test": "pnpm -r --filter=./packages/* run test",
+    "test:coverage": "pnpm -r --filter=./packages/* run test:coverage",
+    "clean": "pnpm -r --filter=./packages/* run clean",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "devDependencies": {
-    "@ldesign/builder": "workspace:*",
+    "@antfu/eslint-config": "^2.6.0",
+    "@types/node": "^20.0.0",
+    "@vitest/coverage-v8": "^1.0.0",
+    "eslint": "^8.56.0",
+    "playwright": "^1.40.0",
     "typescript": "^5.7.3",
-    "vue": "^3.3.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
-  "peerDependenciesMeta": {
-    "vue": {
-      "optional": true
-    },
-    "react": {
-      "optional": true
-    }
+    "vitepress": "^1.0.0",
+    "vitest": "^1.0.0"
   }
 }

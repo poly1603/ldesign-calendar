@@ -1,0 +1,142 @@
+/**
+ * @ldesign/calendar-core - 婵犵數鍋涢悺銊у垝瀹€鍕垫晞闁告洦鍋€閺嬪酣鏌曡箛鏇烆€岄柛鐔锋嚇閺屾稑鈻庤箛鏂夸淮閻庤娲橀悷鈺呭箠閻愬搫唯闁挎梻鐡旈崯鈧? */
+
+import type { CalendarEvent, EventLayout } from '../types';
+import { minutesBetween } from './date''event''(Untitled)';
+  if (maxLength && text.length > maxLength) {
+    return text.substring(0, maxLength - 3) + '...''#3788d8',
+    borderColor: event.borderColor || event.color || '#3788d8',
+    textColor: event.textColor || '#ffffff''') {
+    errors.push(''闂佽瀛╅鏍窗濡ゅ懎绠為柕濞р偓閸嬫捇鏁愭惔鈥茬凹濡炪伅浣告处閳锋帡鏌涚仦鍓х煂缂佲檧鍋撶紓鍌欑劍椤ㄥ懘藝閻㈢绠犳俊銈呮噹缁狅綁鏌熼悜妯荤妞わ附澹嗙槐?);
+  }
+
+  if (!event.end) {
+    errors.push(''缂傚倸鍊搁崐鐑芥倿閿曞倸绠伴悹鍥ф▕閻掕姤銇勯幇鍓佺暠缂侇偄绉归弻娑㈩敃閿濆棛顦ㄩ梺鎸庣〒閸犳牠鎮￠锕€鐐婄憸搴ㄥ吹閸ヮ剚鐓忛柛鈩冾殘缁犺崵鈧鍠楄ぐ鍐綖濠靛鏁冮柕鍫濈墕椤ユ繈鏌ｆ惔銏╁晱闁哥姵顨婇獮鍫ュΩ瑜夐崑鎾绘晲鎼粹€茬凹濡炪伅浣告处閳?);
+  }
+
+  return errors;
+}
+
+/**
+ * 闂傚倷绀侀幉锟犳嚌妤ｅ啯鍋嬮柛鈩冪⊕閸ゆ劙鏌ｉ弬鎸庢喐妞も晜鐓￠幃妤呮晲閸屾稒鐝曞銈嗗姃缁瑩寮婚敓鐘茬倞鐟滃繘骞楅悩缁樼厸? */
+export function mergeEventUpdates(
+  original: CalendarEvent,
+  updates: Partial<CalendarEvent>
+): CalendarEvent {
+  return {
+    ...original,
+    ...updates,
+    start: updates.start ? new Date(updates.start) : original.start,
+    end: updates.end ? new Date(updates.end) : original.end,
+  };
+}
+
+/**
+ * 闂備浇宕垫慨宕囨閵堝洦顫曢柡鍥ュ灪閸嬧晝绱撴担璇＄劷妞も晜鐓￠幃妤呮晲閸屾稒鐝曞銈嗗姃缁瑩寮诲☉銏℃櫇闁稿本姘ㄩ崐鐐烘⒑閸涘﹦鎳€闁稿孩鎸冲畷銏ゎ敆閸曨剛鍘介梺闈涱焾閸庨亶顢旇缁辨挸顓奸崨顔兼缂備浇椴稿璇参ｉ幇顑芥瀻闁规儳纾敍婵嬫椤愩垺澶勬繛鍙夌矒钘濋梺顒€绉甸悡? */
+export function calculateEventPosition(
+  event: CalendarEvent,
+  containerHeight: number,
+  startHour: number = 0,
+  endHour: number = 24
+): { top: number; height: number } {
+  const totalMinutes = (endHour - startHour) * 60;
+  const pixelsPerMinute = containerHeight / totalMinutes;
+
+  const eventStartMinutes = event.start.getHours() * 60 + event.start.getMinutes() - startHour * 60;
+  const eventDuration = minutesBetween(event.start, event.end);
+
+  return {
+    top: Math.max(0, eventStartMinutes * pixelsPerMinute),
+    height: Math.max(20, eventDuration * pixelsPerMinute), //?0px
+  };
+}
+
+/**
+ * 闂傚倷绀侀幉锛勬暜濡ゅ懏鍊块柦妯侯棦閻熼偊鐓ラ柛鎰劤閸擃喖鈹戦悙鍙夘棑闁搞劏妫勯锝嗗閺夋垹鐣炬繛鎾村焹閸嬫挾鈧娲╃徊鍨ｉ幇閭︽晜闁告侗鍠氱粔? */
+export function isEventEditable(event: CalendarEvent, globalEditable?: boolean): boolean {
+  if (event.editable !== undefined) {
+    return event.editable;
+  }
+  return globalEditable !== false;
+}
+
+/**
+ * 闂傚倷绀侀幉锛勬暜濡ゅ懏鍊块柦妯侯棦閻熼偊鐓ラ柛鎰劤閸擃喖鈹戦悙鍙夘棑闁搞劏妫勯锝嗗閺夋垹鐣炬繛鎾村焹閸嬫挾鈧娲╃徊鍧楀焵椤掍浇澹樻い鎴濐樀閻? */
+export function isEventDraggable(event: CalendarEvent, globalEditable?: boolean): boolean {
+  if (event.draggable !== undefined) {
+    return event.draggable;
+  }
+  return isEventEditable(event, globalEditable);
+}
+
+/**
+ * 闂傚倷绀侀幉锛勬暜濡ゅ懏鍊块柦妯侯棦閻熼偊鐓ラ柛鎰劤閸擃喖鈹戦悙鍙夘棑闁搞劏妫勯锝嗗閺夋垹鐣炬繛鎾村焹閸嬫挾鈧娲╃紞渚€骞嗛崘顔藉亜闁绘挸瀛╅悗顒勬⒑閸濆嫷妲归柛銊潐缁? */
+export function isEventResizable(event: CalendarEvent, globalEditable?: boolean): boolean {
+  if (event.resizable !== undefined) {
+    return event.resizable;
+  }
+  return isEventEditable(event, globalEditable);
+}
+
+/**
+ * 闂備礁鎼ˇ顐﹀疾濞戞◤娲晝閸屾氨顔呴梺闈涚墕濡盯銆呴弻銉﹀€甸柨婵嗗€瑰▍鍡樸亜? */
+export function filterEvents(
+  events: CalendarEvent[],
+  predicate: (event: CalendarEvent) => boolean
+): CalendarEvent[] {
+  return events.filter(predicate);
+}
+
+/**
+ * 闂傚倷绀侀幖顐︽嚐椤栫倛澶娾攽閸犮垻鎳撻…銊╁礃閹冨婵? */
+export function findEvent(
+  events: CalendarEvent[],
+  predicate: (event: CalendarEvent) => boolean
+): CalendarEvent | undefined {
+  return events.find(predicate);
+}
+
+/**
+ * 闂傚倷绀侀崥瀣磿閹惰棄搴婇柤鑹扮堪娴滃綊鏌涢妷锝呭妞も晜鐓￠幃妤呮晲閸屾稒鐝曞銈嗗姉閺咁偆妲愰幘瀛樺闁告繂瀚悘鍡椻攽閻戝洨鍒版繛璇х悼濡? */
+export function getEventStats(events: CalendarEvent[]): {
+  total: number;
+  today: number;
+  upcoming: number;
+  past: number;
+  allDay: number;
+} {
+  const now = new Date();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const todayEnd = new Date();
+  todayEnd.setHours(23, 59, 59, 999);
+
+  let todayCount = 0;
+  let upcomingCount = 0;
+  let pastCount = 0;
+  let allDayCount = 0;
+
+  for (const event of events) {
+    if (event.allDay) {
+      allDayCount++;
+    }
+
+    if (isEventInRange(event, today, todayEnd)) {
+      todayCount++;
+    } else if (event.start > now) {
+      upcomingCount++;
+    } else if (event.end < now) {
+      pastCount++;
+    }
+  }
+
+  return {
+    total: events.length,
+    today: todayCount,
+    upcoming: upcomingCount,
+    past: pastCount,
+    allDay: allDayCount,
+  };
+}
+
+

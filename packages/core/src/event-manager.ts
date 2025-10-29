@@ -1,14 +1,14 @@
 /**
- * @ldesign/calendar-core - 事件管理器（优化版）
- * 添加操作队列和优化内存使用
+ * @ldesign/calendar-core - Event Manager (Optimized)
+ * Adds operation queue and optimized memory usage
  */
 
 import type { CalendarEvent, StorageAdapter, EventManagerInterface } from './types';
-import { generateId, validateEvent, sortEvents, isEventInRange } from './utils/event';
+import { generateId, validateEvent, sortEvents, filterEventsByDateRange } from './utils/event';
 import { EventEmitter } from './utils/event-emitter';
 
 /**
- * 本地存储适配器（默认）
+ * Local Storage Adapter (default)
  */
 class LocalStorageAdapter implements StorageAdapter {
   private storageKey = 'ldesign_calendar_events';
@@ -50,14 +50,14 @@ class LocalStorageAdapter implements StorageAdapter {
 }
 
 /**
- * 事件管理器
+ * Event Manager
  */
 export class EventManager implements EventManagerInterface {
   private events: Map<string, CalendarEvent>;
   private storageAdapter: StorageAdapter;
   private eventEmitter: EventEmitter;
-  private operationLock = false; // 操作锁
-
+  private operationLock = false; // Operation lock
+  
   constructor(storageAdapter?: StorageAdapter) {
     this.events = new Map();
     this.storageAdapter = storageAdapter || new LocalStorageAdapter();
@@ -65,7 +65,7 @@ export class EventManager implements EventManagerInterface {
   }
 
   /**
-   * 初始化（从存储加载事件）
+   * Initialize (load events from storage)
    */
   async init(): Promise<void> {
     try {
@@ -80,34 +80,34 @@ export class EventManager implements EventManagerInterface {
   }
 
   /**
-   * 创建事件（优化：添加锁机制）
+   * Create event (optimized: add lock mechanism)
    */
   async createEvent(event: CalendarEvent): Promise<void> {
-    // 等待锁释放
+    // Wait for lock release
     await this.waitForLock();
     this.operationLock = true;
 
     try {
-      // 验证事件
+      // Validate event
       const errors = validateEvent(event);
       if (errors.length > 0) {
-        throw new Error(`事件验证失败: ${errors.join(', ')}`);
+        throw new Error(`Event validation failed: ${errors.join(', ')}`);
       }
 
-      // 如果没有 ID，生成一个
+      // Generate ID if not present
       if (!event.id) {
         event.id = generateId();
       }
 
-      // 检查 ID 是否已存在
+      // Check if ID already exists
       if (this.events.has(event.id)) {
-        throw new Error(`事件 ID 已存在: ${event.id}`);
+        throw new Error(`Event ID already exists: ${event.id}`);
       }
 
-      // 保存到内存
+      // Save to memory
       this.events.set(event.id, event);
 
-      // 保存到存储
+      // Save to storage
       try {
         if (this.storageAdapter.create) {
           await this.storageAdapter.create(event);
@@ -115,12 +115,12 @@ export class EventManager implements EventManagerInterface {
           await this.storageAdapter.save(Array.from(this.events.values()));
         }
       } catch (error) {
-        // 回滚内存更改
+        // Rollback memory changes
         this.events.delete(event.id);
         throw error;
       }
 
-      // 触发变更通知
+      // Trigger change notification
       this.notifyChange();
     } finally {
       this.operationLock = false;
@@ -128,7 +128,7 @@ export class EventManager implements EventManagerInterface {
   }
 
   /**
-   * 更新事件
+   * Update event
    */
   async updateEvent(id: string, updates: Partial<CalendarEvent>): Promise<void> {
     await this.waitForLock();
@@ -138,31 +138,31 @@ export class EventManager implements EventManagerInterface {
       const event = this.events.get(id);
 
       if (!event) {
-        throw new Error(`事件不存在: ${id}`);
+        throw new Error(`Event not found: ${id}`);
       }
 
-      // 创建更新后的事件
+      // Create updated event
       const updatedEvent: CalendarEvent = {
         ...event,
         ...updates,
-        id, // 保持 ID 不变
+        id, // Keep ID unchanged
         start: updates.start ? new Date(updates.start) : event.start,
         end: updates.end ? new Date(updates.end) : event.end,
       };
 
-      // 验证更新后的事件
+      // Validate updated event
       const errors = validateEvent(updatedEvent);
       if (errors.length > 0) {
-        throw new Error(`事件验证失败: ${errors.join(', ')}`);
+        throw new Error(`Event validation failed: ${errors.join(', ')}`);
       }
 
-      // 保存旧事件（用于回滚）
+      // Save old event (for rollback)
       const oldEvent = event;
 
-      // 更新内存
+      // Update memory
       this.events.set(id, updatedEvent);
 
-      // 更新存储
+      // Update storage
       try {
         if (this.storageAdapter.update) {
           await this.storageAdapter.update(id, updates);
@@ -170,12 +170,12 @@ export class EventManager implements EventManagerInterface {
           await this.storageAdapter.save(Array.from(this.events.values()));
         }
       } catch (error) {
-        // 回滚内存更改
+        // Rollback memory changes
         this.events.set(id, oldEvent);
         throw error;
       }
 
-      // 触发变更通知
+      // Trigger change notification
       this.notifyChange();
     } finally {
       this.operationLock = false;
@@ -183,7 +183,7 @@ export class EventManager implements EventManagerInterface {
   }
 
   /**
-   * 删除事件
+   * Delete event
    */
   async deleteEvent(id: string): Promise<void> {
     await this.waitForLock();
@@ -193,13 +193,13 @@ export class EventManager implements EventManagerInterface {
       const event = this.events.get(id);
 
       if (!event) {
-        throw new Error(`事件不存在: ${id}`);
+        throw new Error(`Event not found: ${id}`);
       }
 
-      // 从内存删除
+      // Delete from memory
       this.events.delete(id);
 
-      // 从存储删除
+      // Delete from storage
       try {
         if (this.storageAdapter.delete) {
           await this.storageAdapter.delete(id);
@@ -207,12 +207,12 @@ export class EventManager implements EventManagerInterface {
           await this.storageAdapter.save(Array.from(this.events.values()));
         }
       } catch (error) {
-        // 回滚内存更改
+        // Rollback memory changes
         this.events.set(id, event);
         throw error;
       }
 
-      // 触发变更通知
+      // Trigger change notification
       this.notifyChange();
     } finally {
       this.operationLock = false;
@@ -220,57 +220,57 @@ export class EventManager implements EventManagerInterface {
   }
 
   /**
-   * 获取事件
+   * Get events
    */
   getEvents(start?: Date, end?: Date): CalendarEvent[] {
     let events = Array.from(this.events.values());
 
-    // 过滤日期范围
+    // Filter by date range
     if (start && end) {
-      events = events.filter(event => isEventInRange(event, start, end));
+      events = filterEventsByDateRange(events, start, end);
     }
 
     return sortEvents(events);
   }
 
   /**
-   * 查找单个事件
+   * Find single event
    */
   findEvent(id: string): CalendarEvent | null {
     return this.events.get(id) || null;
   }
 
   /**
-   * 获取所有事件
+   * Get all events
    */
   getAllEvents(): CalendarEvent[] {
     return Array.from(this.events.values());
   }
 
   /**
-   * 清除所有事件
+   * Clear all events
    */
   async clear(): Promise<void> {
     await this.waitForLock();
     this.operationLock = true;
 
     try {
-      // 保存旧数据（用于回滚）
+      // Save old data (for rollback)
       const oldEvents = new Map(this.events);
 
-      // 清空内存
+      // Clear memory
       this.events.clear();
 
-      // 清空存储
+      // Clear storage
       try {
         await this.storageAdapter.clear();
       } catch (error) {
-        // 回滚内存更改
+        // Rollback memory changes
         this.events = oldEvents;
         throw error;
       }
 
-      // 触发变更通知
+      // Trigger change notification
       this.notifyChange();
     } finally {
       this.operationLock = false;
@@ -278,7 +278,7 @@ export class EventManager implements EventManagerInterface {
   }
 
   /**
-   * 批量导入事件
+   * Batch import events
    */
   async importEvents(events: CalendarEvent[]): Promise<void> {
     for (const event of events) {
@@ -287,14 +287,14 @@ export class EventManager implements EventManagerInterface {
   }
 
   /**
-   * 导出事件
+   * Export events
    */
   exportEvents(): CalendarEvent[] {
     return this.getAllEvents();
   }
 
   /**
-   * 搜索事件
+   * Search events
    */
   searchEvents(query: string): CalendarEvent[] {
     const lowerQuery = query.toLowerCase();
@@ -314,21 +314,21 @@ export class EventManager implements EventManagerInterface {
   }
 
   /**
-   * 监听变更
+   * Listen to changes
    */
   onChange(callback: () => void): () => void {
     return this.eventEmitter.on('change', callback);
   }
 
   /**
-   * 通知变更
+   * Notify changes
    */
   private notifyChange(): void {
     this.eventEmitter.emitSync('change');
   }
 
   /**
-   * 等待操作锁释放
+   * Wait for operation lock release
    */
   private async waitForLock(): Promise<void> {
     while (this.operationLock) {
@@ -337,7 +337,7 @@ export class EventManager implements EventManagerInterface {
   }
 
   /**
-   * 获取统计信息
+   * Get statistics
    */
   getStats(): {
     total: number;
@@ -364,11 +364,10 @@ export class EventManager implements EventManagerInterface {
   }
 
   /**
-   * 销毁（清理资源）
+   * Destroy (clean up resources)
    */
   destroy(): void {
     this.events.clear();
     this.eventEmitter.destroy();
   }
 }
-

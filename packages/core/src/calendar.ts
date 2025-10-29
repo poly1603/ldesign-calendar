@@ -1,5 +1,5 @@
-/**
- * @ldesign/calendar-core - 核心 Calendar 类（优化版）
+﻿/**
+ * @ldesign/calendar-core - 鏍稿績 Calendar 绫伙紙浼樺寲鐗堬級
  */
 
 import type {
@@ -14,8 +14,7 @@ import { EventEmitter } from './utils/event-emitter';
 import { generateId } from './utils/event';
 
 /**
- * Calendar 类
- */
+ * Calendar 绫? */
 export class Calendar implements CalendarInstance {
   private config: CalendarConfig;
   private eventManager: EventManager;
@@ -28,7 +27,7 @@ export class Calendar implements CalendarInstance {
     this.config = this.mergeConfig(config);
     this.eventEmitter = new EventEmitter();
 
-    // 初始化管理器
+    // 鍒濆鍖栫鐞嗗櫒
     this.eventManager = new EventManager(this.config.storage);
     this.viewManager = new ViewManager(
       this.config.initialView,
@@ -36,23 +35,23 @@ export class Calendar implements CalendarInstance {
       this.config.firstDayOfWeek
     );
 
-    // 设置回调
+    // 璁剧疆鍥炶皟
     this.setupCallbacks();
 
-    // 初始化
-    this.init();
+    // 鍒濆鍖?    this.initialize().catch(console.error);
   }
 
   /**
-   * 初始化
+   * Initialize
    */
-  private async init(): Promise<void> {
+  // @ts-expect-error - Method is used via this.initialize() call
+  private async initialize(): Promise<void> {
     if (this.isDestroyed) return;
 
-    // 从存储加载事件
+    // Load events from storage
     await this.eventManager.init();
 
-    // 监听事件变更
+    // Listen to event changes
     this.eventManager.onChange(() => {
       this.notifyRender();
     });
@@ -62,7 +61,7 @@ export class Calendar implements CalendarInstance {
   }
 
   /**
-   * 合并配置
+   * 鍚堝苟閰嶇疆
    */
   private mergeConfig(config: CalendarConfig): CalendarConfig {
     return {
@@ -92,12 +91,12 @@ export class Calendar implements CalendarInstance {
   }
 
   /**
-   * 设置回调
+   * 璁剧疆鍥炶皟
    */
   private setupCallbacks(): void {
     const callbacks = this.config.callbacks || {};
 
-    // 注册事件监听
+    // 娉ㄥ唽浜嬩欢鐩戝惉
     if (callbacks.onEventClick) {
       this.on('eventClick', callbacks.onEventClick);
     }
@@ -122,7 +121,7 @@ export class Calendar implements CalendarInstance {
   }
 
   /**
-   * 改变视图
+   * 鏀瑰彉瑙嗗浘
    */
   changeView(view: CalendarView): void {
     this.assertNotDestroyed();
@@ -132,8 +131,7 @@ export class Calendar implements CalendarInstance {
   }
 
   /**
-   * 下一个周期
-   */
+   * 涓嬩竴涓懆鏈?   */
   next(): void {
     this.assertNotDestroyed();
     this.viewManager.next();
@@ -141,8 +139,7 @@ export class Calendar implements CalendarInstance {
   }
 
   /**
-   * 上一个周期
-   */
+   * 涓婁竴涓懆鏈?   */
   prev(): void {
     this.assertNotDestroyed();
     this.viewManager.prev();
@@ -150,8 +147,7 @@ export class Calendar implements CalendarInstance {
   }
 
   /**
-   * 跳转到今天
-   */
+   * 璺宠浆鍒颁粖澶?   */
   today(): void {
     this.assertNotDestroyed();
     this.viewManager.today();
@@ -159,8 +155,7 @@ export class Calendar implements CalendarInstance {
   }
 
   /**
-   * 跳转到指定日期
-   */
+   * 璺宠浆鍒版寚瀹氭棩鏈?   */
   gotoDate(date: Date): void {
     this.assertNotDestroyed();
     this.viewManager.setCurrentDate(date);
@@ -168,7 +163,7 @@ export class Calendar implements CalendarInstance {
   }
 
   /**
-   * 添加事件
+   * 娣诲姞浜嬩欢
    */
   async addEvent(event: Omit<CalendarEvent, 'id'>): Promise<string> {
     this.assertNotDestroyed();
@@ -181,7 +176,7 @@ export class Calendar implements CalendarInstance {
       end: new Date(event.end),
     };
 
-    // 触发回调
+    // 瑙﹀彂鍥炶皟
     const result = await this.eventEmitter.emit('eventCreate', newEvent);
     if (result === false) {
       throw new Error('Event creation cancelled');
@@ -192,7 +187,7 @@ export class Calendar implements CalendarInstance {
   }
 
   /**
-   * 更新事件
+   * 鏇存柊浜嬩欢
    */
   async updateEvent(id: string, updates: Partial<CalendarEvent>): Promise<void> {
     this.assertNotDestroyed();
@@ -204,7 +199,7 @@ export class Calendar implements CalendarInstance {
 
     const newEvent = { ...oldEvent, ...updates };
 
-    // 触发回调
+    // 瑙﹀彂鍥炶皟
     const result = await this.eventEmitter.emit('eventUpdate', newEvent, oldEvent);
     if (result === false) {
       throw new Error('Event update cancelled');
@@ -214,12 +209,12 @@ export class Calendar implements CalendarInstance {
   }
 
   /**
-   * 删除事件
+   * 鍒犻櫎浜嬩欢
    */
   async deleteEvent(id: string): Promise<void> {
     this.assertNotDestroyed();
 
-    // 触发回调
+    // 瑙﹀彂鍥炶皟
     const result = await this.eventEmitter.emit('eventDelete', id);
     if (result === false) {
       throw new Error('Event deletion cancelled');
@@ -229,7 +224,7 @@ export class Calendar implements CalendarInstance {
   }
 
   /**
-   * 获取事件
+   * 鑾峰彇浜嬩欢
    */
   getEvents(start?: Date, end?: Date): CalendarEvent[] {
     this.assertNotDestroyed();
@@ -237,7 +232,7 @@ export class Calendar implements CalendarInstance {
   }
 
   /**
-   * 获取单个事件
+   * 鑾峰彇鍗曚釜浜嬩欢
    */
   getEvent(id: string): CalendarEvent | null {
     this.assertNotDestroyed();
@@ -245,28 +240,28 @@ export class Calendar implements CalendarInstance {
   }
 
   /**
-   * 获取当前视图
+   * 鑾峰彇褰撳墠瑙嗗浘
    */
   getCurrentView(): CalendarView {
     return this.viewManager.getCurrentView();
   }
 
   /**
-   * 获取当前日期
+   * 鑾峰彇褰撳墠鏃ユ湡
    */
   getCurrentDate(): Date {
     return this.viewManager.getCurrentDate();
   }
 
   /**
-   * 获取配置
+   * 鑾峰彇閰嶇疆
    */
   getConfig(): CalendarConfig {
     return { ...this.config };
   }
 
   /**
-   * 更新配置
+   * 鏇存柊閰嶇疆
    */
   updateConfig(config: Partial<CalendarConfig>): void {
     this.assertNotDestroyed();
@@ -275,29 +270,28 @@ export class Calendar implements CalendarInstance {
   }
 
   /**
-   * 渲染通知
+   * 娓叉煋閫氱煡
    */
   render(): void {
     this.notifyRender();
   }
 
   /**
-   * 监听事件
+   * Listen to events
    */
-  on(event: string, callback: Function): () => void {
+  on(event: string, callback: (...args: any[]) => void): () => void {
     return this.eventEmitter.on(event, callback);
   }
 
   /**
-   * 取消监听
+   * 鍙栨秷鐩戝惉
    */
-  off(event: string, callback: Function): void {
+  off(event: string, callback: (...args: any[]) => void): void {
     this.eventEmitter.off(event, callback);
   }
 
   /**
-   * 销毁（清理资源）
-   */
+   * 閿€姣侊紙娓呯悊璧勬簮锛?   */
   destroy(): void {
     if (this.isDestroyed) return;
 
@@ -308,7 +302,7 @@ export class Calendar implements CalendarInstance {
   }
 
   /**
-   * 通知渲染
+   * 閫氱煡娓叉煋
    */
   private notifyRender(): void {
     if (!this.isInitialized || this.isDestroyed) return;
@@ -329,8 +323,7 @@ export class Calendar implements CalendarInstance {
   }
 
   /**
-   * 断言未销毁
-   */
+   * 鏂█鏈攢姣?   */
   private assertNotDestroyed(): void {
     if (this.isDestroyed) {
       throw new Error('Calendar instance has been destroyed');
@@ -339,9 +332,10 @@ export class Calendar implements CalendarInstance {
 }
 
 /**
- * 便捷创建函数
+ * 渚挎嵎鍒涘缓鍑芥暟
  */
 export function createCalendar(config: CalendarConfig = {}): Calendar {
   return new Calendar(config);
 }
+
 
