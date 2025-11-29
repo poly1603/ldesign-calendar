@@ -2,12 +2,13 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "ESNext",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": ["ES2020"],
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
     "outDir": "./dist",
     "rootDir": "./src",
+    "removeComments": false,
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -18,10 +19,10 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
-    "types": ["vitest/globals", "node"]
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts", "vite.config.ts"]
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }
-

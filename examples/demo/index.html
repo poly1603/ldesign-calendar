@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>日历核心库测试 Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+    }
+
+    .test-section {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .test-section h2 {
+      color: #1890ff;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e8e8e8;
+    }
+
+    .test-result {
+      background: #f9f9f9;
+      border-left: 4px solid #52c41a;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .test-result.error {
+      border-left-color: #ff4d4f;
+      background: #fff1f0;
+    }
+
+    .test-result pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    .status.success {
+      background: #f6ffed;
+      color: #52c41a;
+      border: 1px solid #b7eb8f;
+    }
+
+    .status.error {
+      background: #fff1f0;
+      color: #ff4d4f;
+      border: 1px solid #ffa39e;
+    }
+
+    button {
+      background: #1890ff;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+
+    button:hover {
+      background: #40a9ff;
+    }
+
+    button:active {
+      background: #096dd9;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📅 日历核心库功能测试</h1>
+    <p class="subtitle">测试 @ldesign/calendar-core 的所有核心功能</p>
+
+    <div id="test-results"></div>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

@@ -1,70 +1,43 @@
 {
   "name": "@ldesign/calendar-core",
-  "version": "1.0.0",
-  "description": "日历核心功能 - 纯JavaScript/TypeScript实现，框架无关",
-  "keywords": [
-    "calendar",
-    "scheduler",
-    "events",
-    "date",
-    "recurrence",
-    "framework-agnostic",
-    "typescript"
-  ],
-  "author": "LDesign Team",
-  "license": "MIT",
-  "type": "module",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
+  "version": "0.1.0",
+  "description": "Framework-agnostic calendar core library",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    },
-    "./calendar": {
-      "types": "./dist/calendar.d.ts",
-      "import": "./dist/calendar.js",
-      "require": "./dist/calendar.cjs"
-    },
-    "./types": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/types/index.js",
-      "require": "./dist/types/index.cjs"
-    },
-    "./utils/*": {
-      "types": "./dist/utils/*.d.ts",
-      "import": "./dist/utils/*.js",
-      "require": "./dist/utils/*.cjs"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
     }
   },
   "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
+    "dist"
   ],
   "scripts": {
-    "build": "vite build",
-    "dev": "vite build --watch",
-    "clean": "rimraf dist",
-    "lint": "eslint src",
-    "lint:fix": "eslint src --fix",
+    "dev": "tsup --watch",
+    "build": "tsup",
     "type-check": "tsc --noEmit",
     "test": "vitest",
+    "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage"
   },
+  "keywords": [
+    "calendar",
+    "date",
+    "datetime",
+    "lunar",
+    "i18n",
+    "typescript"
+  ],
+  "author": "LDesign Team",
+  "license": "MIT",
   "devDependencies": {
-    "@antfu/eslint-config": "^2.6.0",
-    "@types/jsdom": "^27.0.0",
-    "@types/node": "^20.0.0",
-    "@vitest/coverage-v8": "^1.0.0",
-    "eslint": "^8.56.0",
-    "jsdom": "^27.0.1",
-    "rimraf": "^5.0.0",
-    "typescript": "^5.7.3",
-    "vite": "^5.0.0",
-    "vite-plugin-dts": "^3.0.0",
-    "vitest": "^1.0.0"
-  }
+    "@types/node": "^20.10.0",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3",
+    "vitest": "^1.0.4"
+  },
+  "dependencies": {}
 }
